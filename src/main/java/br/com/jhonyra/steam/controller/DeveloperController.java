@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.jhonyra.steam.model.dto.DeveloperDto;
 import br.com.jhonyra.steam.model.entity.Developer;
 import br.com.jhonyra.steam.service.DeveloperService;
 import io.swagger.annotations.ApiOperation;
@@ -29,7 +30,9 @@ public class DeveloperController {
 	}
 	
 	@PostMapping("/create")
-	public Developer createDeveloper(@RequestBody Developer developer){
+	public Developer createDeveloper(@RequestBody DeveloperDto developerDto){
+		
+		Developer developer = developerDto.transfromDtoToDeveloperWithoutId();
 		
 		this.developerService.create(developer);
 		
@@ -37,7 +40,9 @@ public class DeveloperController {
 	}
 	
 	@PostMapping("/update")
-	public Developer updateDeveloper(@RequestBody Developer developer){
+	public Developer updateDeveloper(@RequestBody DeveloperDto developerDto){
+		
+		Developer developer = developerDto.transfromDtoToDeveloperWithId();
 		
 		this.developerService.update(developer);
 		
