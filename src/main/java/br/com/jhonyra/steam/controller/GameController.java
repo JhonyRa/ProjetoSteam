@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.jhonyra.steam.model.dto.GameDto;
 import br.com.jhonyra.steam.model.entity.Game;
 import br.com.jhonyra.steam.service.GameService;
 import io.swagger.annotations.ApiOperation;
@@ -28,7 +29,9 @@ public class GameController {
 	}
 	
 	@PostMapping("/create")
-	public Game createGame(@RequestBody Game game){
+	public Game createGame(@RequestBody GameDto gameDto){
+		
+		Game game = gameDto.transfromDtoToGameWithoutId();
 		
 		this.gameService.create(game);
 		
@@ -36,7 +39,9 @@ public class GameController {
 	}
 	
 	@PostMapping("/update")
-	public Game updateGame(@RequestBody Game game){
+	public Game updateGame(@RequestBody GameDto gameDto){
+		
+		Game game = gameDto.transfromDtoToGameWithId();
 		
 		this.gameService.update(game);
 		

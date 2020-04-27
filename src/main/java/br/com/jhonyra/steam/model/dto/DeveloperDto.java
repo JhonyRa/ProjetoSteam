@@ -1,5 +1,7 @@
 package br.com.jhonyra.steam.model.dto;
 
+
+
 import java.util.Date;
 
 import br.com.jhonyra.steam.model.entity.Developer;

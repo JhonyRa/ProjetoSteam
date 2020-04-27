@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.jhonyra.steam.model.dto.CategoryDto;
 import br.com.jhonyra.steam.model.entity.Category;
 import br.com.jhonyra.steam.service.CategoryService;
 import io.swagger.annotations.ApiOperation;
@@ -29,7 +30,9 @@ public class CategoryController {
 	}
 	
 	@PostMapping("/create")
-	public Category createCategory(@RequestBody Category category){
+	public Category createCategory(@RequestBody CategoryDto categoryDto){
+		
+		Category category = categoryDto.transfromDtoToCategoryWithoutId();
 		
 		this.categoryService.create(category);
 		
@@ -37,7 +40,9 @@ public class CategoryController {
 	}
 	
 	@PostMapping("/update")
-	public Category updateCategory(@RequestBody Category category){
+	public Category updateCategory(@RequestBody CategoryDto categoryDto){
+		
+		Category category = categoryDto.transfromDtoToCategoryWithId();
 		
 		this.categoryService.update(category);
 		
