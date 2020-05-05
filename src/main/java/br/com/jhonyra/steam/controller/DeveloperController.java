@@ -4,9 +4,11 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.jhonyra.steam.model.dto.DeveloperDto;
@@ -50,13 +52,13 @@ public class DeveloperController {
 	}
 	
 	@PostMapping("/delete-physical")
-	public Boolean deletePhysicalr(@RequestBody Long developerId){
+	public Boolean deletePhysicalr(@RequestParam(name = "id") Long developerId){
 		
 		return this.developerService.deletePhysical(developerId);
 	}
 	
-	@PostMapping("/delete-logical")
-	public Boolean deleteLogical(@RequestBody Long developerId){
+	@PostMapping("/delete-logical/{id}")
+	public Boolean deleteLogical(@PathVariable(name = "id") Long developerId){
 		
 		return this.developerService.deleteLogical(developerId);
 	}
