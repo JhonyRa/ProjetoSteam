@@ -1,5 +1,6 @@
 package br.com.jhonyra.steam.model.dto;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -12,40 +13,48 @@ public class GameDto {
 	private Long id;
 	private String name;
 	private String description;
-	private Date release_date;
+	private Date releaseDate;
 	private DeveloperDto developer;
-	
 	private List<CategoryDto> categories;
 	
-	public Game transfromDtoToGameWithId() {
+	public List<CategoryDto> getCategories(){
+		if(this.categories == null) {
+			this.categories = new ArrayList<>();
+		}
+		
+		return this.categories;
+	}
+
+	public Game transformDtoToGameWithId() {
 		
 		Game game = new Game();
 		game.setId(this.getId());
 		game.setName(this.getName());
 		game.setDescription(this.getDescription());
-		game.setRelease_date(this.getRelease_date());
-		game.setDeveloper(developer.transfromDtoToDeveloperWithId());
+		game.setRelease_date(this.getReleaseDate());
 		
-		//Pega a lista do GameDTO e transforma em um set na entidade GAme
-		for(CategoryDto category : categories) {
-			game.getCategories().add(category.transfromDtoToCategoryWithId());
-		}
-		
-		return game;
-	}
-	
-	public Game transfromDtoToGameWithoutId() {
-		
-		Game game = new Game();
-		game.setName(this.getName());
-		game.setDescription(this.getDescription());
-		game.setRelease_date(this.getRelease_date());
-		
-		for(CategoryDto category : categories) {
-			game.getCategories().add(category.transfromDtoToCategoryWithId());
+		if(this.getDeveloper() != null) {
+			game.setDeveloper(this.getDeveloper().transfromDtoToDeveloperWithId());
 		}
 		
 		return game;
 	}
 
+	public Game transformDtoToGameWithoutId() {
+		
+		Game game = new Game();
+		game.setName(this.getName());
+		game.setDescription(this.getDescription());
+		game.setRelease_date(this.getReleaseDate());
+		
+		if(this.getDeveloper() != null) {
+			game.setDeveloper(this.getDeveloper().transfromDtoToDeveloperWithId());
+		}
+		
+		for(CategoryDto categoryDto : this.getCategories()){
+			game.getCategories().add(categoryDto.transfromDtoToCategoryWithId());
+		}
+		
+		return game;
+	}
 }

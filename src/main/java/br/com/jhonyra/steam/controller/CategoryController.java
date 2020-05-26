@@ -20,33 +20,24 @@ import io.swagger.annotations.ApiOperation;
 public class CategoryController {
 	
 	@Autowired
-	private CategoryService categoryService;	
-
-	//getmapping aponta para o método de acordo com a url.
+	private CategoryService categoryService;
+	
+	@ApiOperation("Metodo que retorna lista de categorias")
 	@GetMapping("/list-all")
-	@ApiOperation("Este eh um metodo para retornar a lista de categorias.")
-	public List<Category> getCategories(){
-		return this.categoryService.listAll();
+	public List<Category> getCategorys(){
+		return categoryService.listAll();
 	}
 	
 	@PostMapping("/create")
 	public Category createCategory(@RequestBody CategoryDto categoryDto){
-		
 		Category category = categoryDto.transfromDtoToCategoryWithoutId();
-		
-		this.categoryService.create(category);
-		
-		return category;
+		return categoryService.create(category);
 	}
 	
 	@PostMapping("/update")
 	public Category updateCategory(@RequestBody CategoryDto categoryDto){
-		
 		Category category = categoryDto.transfromDtoToCategoryWithId();
-		
-		this.categoryService.update(category);
-		
-		return category;
+		return categoryService.update(category);
 	}
 		
 	@PostMapping("/delete-physical")

@@ -22,16 +22,16 @@ public class GameController {
 	@Autowired
 	private GameService gameService;
 	
-	@GetMapping("/list-all")
-	@ApiOperation("Este eh um metodo para retornar a lista de jogos.")
+	@GetMapping("/list")
 	public List<Game> getGames(){
-		return this.gameService.listAll();
+		List<Game> listAll = this.gameService.listAll();
+		return listAll;
 	}
 	
 	@PostMapping("/create")
-	public Game createGame(@RequestBody GameDto gameDto){
+	public Game createGame(@RequestBody GameDto gameDto ){
 		
-		Game game = gameDto.transfromDtoToGameWithoutId();
+		Game game = gameDto.transformDtoToGameWithoutId();
 		
 		this.gameService.create(game);
 		
@@ -39,24 +39,19 @@ public class GameController {
 	}
 	
 	@PostMapping("/update")
-	public Game updateGame(@RequestBody GameDto gameDto){
-		
-		Game game = gameDto.transfromDtoToGameWithId();
+	public Game updateGame(@RequestBody GameDto gameDto ){
+
+		Game game = gameDto.transformDtoToGameWithId();
 		
 		this.gameService.update(game);
 		
 		return game;
 	}
-	
-	@PostMapping("/delete-physical")
-	public Boolean deletePhysicalr(@RequestBody Long gameId){
-		
-		return this.gameService.deletePhysical(gameId);
+
+	@PostMapping("/delete")
+	public Boolean deleteGame(@RequestBody Long gameId ){
+		return this.gameService.delete(gameId);
 	}
 	
-	@PostMapping("/delete-logical")
-	public Boolean deleteLogical(@RequestBody Long gameId){
-		
-		return this.gameService.deleteLogical(gameId);
-	}
+	
 }

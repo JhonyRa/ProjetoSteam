@@ -6,7 +6,6 @@ import java.util.Optional;
 
 import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
 import br.com.jhonyra.steam.model.entity.Category;
@@ -19,45 +18,31 @@ public class CategoryService {
 	private CategoryRepository categoryRepository;
 	
 	public List<Category> listAll(){
-		
-		Category category = new Category();
-		category.getDataControl().setDeleted(false);
-		
-		Example<Category> example = Example.of(category);
-		
-		return this.categoryRepository.findAll(example);
+		return categoryRepository.findAll();
 	}
 	
 	public Category create(Category category){
-		
 		if(category.getId() != null) {
-			throw new ServiceException("Não eh possivel salvar. pois o id esta preenchido.");
+			throw new ServiceException("Não e possivel salvar, pois o id está preenchido");
 		}
-		
 		category.getDataControl().markCreated(new Date());
-		this.categoryRepository.save(category);
-		
-		return category;
+		return categoryRepository.save(category);
 	}
 	
 	public Category update(Category category){
-		
 		if(category.getId() == null) {
-			throw new ServiceException("Não eh possivel salvar. pois o id esta preenchido.");
+			throw new ServiceException("Não e possivel editar, pois o id não está preenchido");
 		}
-		
 		Optional<Category> currentCategory = this.categoryRepository.findById(category.getId());
 		
 		if(!currentCategory.isPresent()) {
-			throw new ServiceException("Nao eh possivel salvar pois o objeto nao existe");
+			throw new ServiceException("Não e possivel editar, pois o objeto não existe");
 		}
 		
 		category.setDataControl(currentCategory.get().getDataControl());
-		
+			
 		category.getDataControl().markUpdated(new Date());
-		this.categoryRepository.save(category);
-		
-		return category;
+		return categoryRepository.save(category);
 	}
 		
 	/**

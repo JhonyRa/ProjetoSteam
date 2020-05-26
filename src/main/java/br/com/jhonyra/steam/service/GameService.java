@@ -3,14 +3,17 @@ package br.com.jhonyra.steam.service;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
+import br.com.jhonyra.steam.model.entity.Category;
 import br.com.jhonyra.steam.model.entity.Developer;
 import br.com.jhonyra.steam.model.entity.Game;
+import br.com.jhonyra.steam.repository.CategoryRepository;
 import br.com.jhonyra.steam.repository.DeveloperRepository;
 import br.com.jhonyra.steam.repository.GameRepository;
 
@@ -22,33 +25,23 @@ public class GameService {
 	
 	@Autowired
 	private DeveloperRepository developerRepository;
+
+	@Autowired
+	private CategoryRepository categoryRepository;
 	
 	public List<Game> listAll(){
-		
-		Game game = new Game();
-		game.getDataControl().setDeleted(false);
-		
-		Example<Game> example = Example.of(game);
-		
-		return this.gameRepository.findAll(example);
+		return this.gameRepository.findAll();
 	}
 	
 	public Game create(Game game){
 		
 		if(game.getId() != null) {
-			throw new ServiceException("Não eh possivel salvar. pois o id esta preenchido.");
+			throw new ServiceException("Nao eh possivel salvar, pois o id esta preeenchido");			
 		}
 		
-		if(game.getDeveloper() == null || game.getDeveloper().getId() == null) {
-			throw new ServiceException("Objeto developer eh obrigatorio");
-		}
-		//Validação 2: Verificar se o objeto enviado realmente existe
-		Optional<Developer> developer = this.developerRepository.findById(game.getDeveloper().getId());
+		validateDeveloper(game.getDeveloper());
 		
-		if(!developer.isPresent()) {
-			throw new ServiceException("Nao eh possivel salvar pois o objeto nao existe");
-		}
-		
+		validateCategoryList(game.getCategories());
 		
 		game.getDataControl().markCreated(new Date());
 		this.gameRepository.save(game);
@@ -59,7 +52,7 @@ public class GameService {
 	public Game update(Game game){
 		
 		if(game.getId() == null) {
-			throw new ServiceException("Não eh possivel salvar. pois o id esta preenchido.");
+			throw new ServiceException("Nao eh possivel salvar, pois o id nao esta preeenchido");			
 		}
 		
 		Optional<Game> currentGame = this.gameRepository.findById(game.getId());
@@ -68,7 +61,9 @@ public class GameService {
 			throw new ServiceException("Nao eh possivel salvar pois o objeto nao existe");
 		}
 		
-		validDeveloper(game.getDeveloper());
+		validateDeveloper(game.getDeveloper());
+		
+		validateCategoryList(game.getCategories());
 		
 		game.setDataControl(currentGame.get().getDataControl());
 		
@@ -78,31 +73,51 @@ public class GameService {
 		return game;
 	}
 	
-	public boolean validDeveloper(Developer developer) {
 	
+	public boolean validateCategoryList(Set<Category> categories) {
+		
+		if(categories == null) {
+			throw new ServiceException("Objeto categories eh obrigatorio");
+		}
+		
+		for(Category category:categories) {
+			
+			Optional<Category> categoryOptional = this.categoryRepository.findById(category.getId());
+			
+			if(!categoryOptional.isPresent()) {
+				throw new ServiceException("Objeto categoryOptional informando nao existe "+category.getId());
+			}
+			
+			if(categoryOptional.get().getDataControl().getDeleted()) {
+				throw new ServiceException("Objeto categoryOptional informando nao ativo "+category.getId());
+			}
+		}
+		
+		
+		return true;
+	}
+	
+	public boolean validateDeveloper(Developer developer) {
+		
 		if(developer == null || developer.getId() == null) {
 			throw new ServiceException("Objeto developer eh obrigatorio");
 		}
-	
+		
 		Optional<Developer> developerOptional = this.developerRepository.findById(developer.getId());
 		
 		if(!developerOptional.isPresent()) {
-			throw new ServiceException("Objeto informado nao existe");
+			throw new ServiceException("Objeto developer informando nao existe");
 		}
 		
 		return true;
 	}
 	
-	/**
-	 * @param gameId = id do Game
-	 * @return deleta o Game do banco definitivamente.
-	 */
-	public boolean deletePhysical(Long gameId) {
+	public boolean delete(Long gameId) {
 		
 		Optional<Game> currentGame = this.gameRepository.findById(gameId);
 		
 		if(!currentGame.isPresent()) {
-			throw new ServiceException("Não eh possivel deletar pois o objeto nao existe");
+			throw new ServiceException("Nao eh possivel deletar pois o objeto nao existe");
 		}
 		
 		this.gameRepository.delete(currentGame.get());
@@ -110,23 +125,4 @@ public class GameService {
 		return true;
 	}
 	
-	/**
-	 * @param gameId = id do Game
-	 * @return "deleta" o game marcando no banco como excluído e preenchendo a data de exclusão, porém mantém o registro.
-	 */
-	public boolean deleteLogical(Long gameId) {
-		
-		Optional<Game> currentGame = this.gameRepository.findById(gameId);
-		
-		if(!currentGame.isPresent()) {
-			throw new ServiceException("Não eh possivel deletar pois o objeto nao existe");
-		}
-		
-		currentGame.get().getDataControl().markDeleted(new Date());
-		
-		this.gameRepository.save(currentGame.get());
-		
-		return true;
-	}
-
 }
