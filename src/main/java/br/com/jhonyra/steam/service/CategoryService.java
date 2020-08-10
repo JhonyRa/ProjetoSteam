@@ -80,4 +80,8 @@ public class CategoryService {
 		
 		return true;
 	}
+
+	public Category searchById(Long categoryId){
+		return categoryRepository.findById(categoryId).get();
+	}
 }

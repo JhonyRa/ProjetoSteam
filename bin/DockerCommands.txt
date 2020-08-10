@@ -1,9 +1,0 @@
-docker build -t steam-api .
-
-docker run --name steam-api -p 8080:8080 steam-api
-
-docker run --name steam-api -p 8080:8080 -it steam-api  (roda comando dentro do container)
-
-docker run --name steam-api -p 8080:8080 -d steam-api (roda o comando em background)
-
-docker stop steam-api
